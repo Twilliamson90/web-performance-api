@@ -9,7 +9,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chrome-launcher": "^0.10.2",
     "express": "^4.16.3",
-    "lighthouse": "^3.0.3"
+    "firebase-admin": "^5.13.1",
+    "lighthouse": "^3.0.3",
+    "puppeteer": "^1.6.2",
+    "request": "^2.87.0",
+    "util": "^0.11.0"
   }
 }
