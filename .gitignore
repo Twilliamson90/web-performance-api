@@ -16,9 +16,7 @@
 .env.test.local
 .env.production.local
 /.idea
-.firebaserc
-database.rules.json
-firebase-db.json
+config.js
 
 npm-debug.log*
 yarn-debug.log*

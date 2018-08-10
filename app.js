@@ -1,33 +1,19 @@
 const express = require('express');
+const config = require('./config');
+const mysql = require('mysql');
 const lighthouse = require('lighthouse');
 const chromeLauncher = require('chrome-launcher');
-const admin = require("firebase-admin");
-const serviceAccount = require("./firebase-db.json");
 
 const app = express();
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://web-pref-leaderboard.firebaseio.com"
+const db = mysql.createConnection(config.development.database);
+
+db.connect((err) => {
+  if(err) {
+    throw err;
+  }
+  console.log('Mysql connected..')
 });
-
-const db = admin.database();
-let ref = db.ref("/boards");
-
-ref.on('value', gotData, errData);
-
-function gotData(data) {
-  console.log('Got data!');
-  console.log(data.val());
-}
-
-function errData(err) {
-  console.log('Error!');
-  console.log(err);
-}
-
-console.log(ref);
-
 
 function launchChromeAndRunLighthouse(url, opts, config = null) {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
@@ -47,20 +33,28 @@ app.get("/", (req, res) => {
 });
 
 app.get("/boards", (req, res) => {
-
-  const opts = {
-    chromeFlags: ['--headless'],
-  };
-
   const testURL = 'https://travisw.me';
 
   // Usage:
-  launchChromeAndRunLighthouse(testURL, opts).then(results => {
+  launchChromeAndRunLighthouse(testURL).then(results => {
     console.log(testURL);
-    console.log(results.audits['speed-index'].rawValue);
     res.json(results.audits['speed-index'].rawValue);
   });
+});
 
+app.get("/boards/add", (req, res) => {
+  let board = {name: 'Top Brands', path:'top-brands-gxy76'};
+  let sql = 'INSERT INTO boards SET ?';
+  let query = db.query(sql, board, (err, result) => {
+    if(err) throw err;
+    console.log(result);
+    res.send('Added board');
+  });
+});
+
+app.get("/scores/:boardId", (req, res) => {
+  console.log(req.params.boardId);
+  res.send(req.params.boardId)
 });
 
 app.listen(3001, () => {
