@@ -1,62 +1,48 @@
 const express = require('express');
-const config = require('./config');
-const mysql = require('mysql');
-const lighthouse = require('lighthouse');
-const chromeLauncher = require('chrome-launcher');
+const bodyParser = require("body-parser");
 
 const app = express();
+const port = process.env.PORT || 3001;
 
-const db = mysql.createConnection(config.development.database);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
-db.connect((err) => {
-  if(err) {
-    throw err;
-  }
-  console.log('Mysql connected..')
+const Board = require('./components/Board');
+const Entry = require('./components/Entry');
+const Score = require('./components/Score');
+
+// Routes
+const router = express.Router();
+
+router.use(function(req, res, next) {
+  // Middleware
+  next();
 });
 
-function launchChromeAndRunLighthouse(url, opts, config = null) {
-  return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
-    opts.port = chrome.port;
-    return lighthouse(url, opts, config).then(results => {
-      // use results.lhr for the JS-consumeable output
-      // https://github.com/GoogleChrome/lighthouse/blob/master/typings/lhr.d.ts
-      // use results.report for the HTML/JSON/CSV output as a string
-      // use results.artifacts for the trace/screenshots/other specific case you need (rarer)
-      return chrome.kill().then(() => results.lhr)
-    });
-  });
-}
-
-app.get("/", (req, res) => {
+router.get("/", (req, res) => {
   res.send("Hello from root");
 });
 
-app.get("/boards", (req, res) => {
-  const testURL = 'https://travisw.me';
+router.route("/boards")
+  .get(Board.getAllBoards)
+  .post(Board.addBoard);
 
-  // Usage:
-  launchChromeAndRunLighthouse(testURL).then(results => {
-    console.log(testURL);
-    res.json(results.audits['speed-index'].rawValue);
-  });
-});
+router.route("/boards/:id")
+  .get(Board.getBoardById);
 
-app.get("/boards/add", (req, res) => {
-  let board = {name: 'Top Brands', path:'top-brands-gxy76'};
-  let sql = 'INSERT INTO boards SET ?';
-  let query = db.query(sql, board, (err, result) => {
-    if(err) throw err;
-    console.log(result);
-    res.send('Added board');
-  });
-});
+router.route("/boards/:id/entries")
+  .get(Entry.getEntriesForBoard)
+  .post(Entry.addEntry);
 
-app.get("/scores/:boardId", (req, res) => {
-  console.log(req.params.boardId);
-  res.send(req.params.boardId)
-});
+router.route("/entries/:id")
+  .get(Entry.getEntryById)
+  .post(Score.addScore);
 
-app.listen(3001, () => {
+// router.route("/entries/:id/scores")
+//   .get(Entry.getScoresById)
+
+app.use('/', router);
+
+app.listen(port, () => {
   console.log("Server is up and listening on 3001...");
 });
