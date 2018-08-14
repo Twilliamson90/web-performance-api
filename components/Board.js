@@ -21,16 +21,17 @@ const Board = {
     });
   },
 
-  addBoard: function(req, res) {
+  addBoard: async function(req) {
     // console.log(req.body);
     const boardName = req.body.boardName;
     const boardPath = boardName.replace(/\s+/g, '-').toLowerCase() + '-' + shortid.generate();
     const board = {name: boardName, path: boardPath};
     const sql = 'INSERT INTO boards SET ?';
-    const query = db.query(sql, board, (err, result) => {
+
+    const query = await db.query(sql, board, (err, result) => {
       if(err) throw err;
       // console.log(result);
-      res.json(result);
+      return result;
     });
   }
 

@@ -14,7 +14,7 @@ const Score = require('./components/Score');
 // Routes
 const router = express.Router();
 
-router.use(function(req, res, next) {
+router.use((req, res, next) => {
   // Middleware
   next();
 });
@@ -25,7 +25,13 @@ router.get("/", (req, res) => {
 
 router.route("/boards")
   .get(Board.getAllBoards)
-  .post(Board.addBoard);
+  .post((req, res) => {
+    const newBoard = Board.addBoard(req);
+    newBoard.then(function(x) {
+      console.log(x);
+    });
+    res.send('hi');
+  });
 
 router.route("/boards/:id")
   .get(Board.getBoardById);
