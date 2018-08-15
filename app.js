@@ -1,18 +1,18 @@
-const express = require('express');
-const bodyParser = require("body-parser");
+let express = require('express');
+let bodyParser = require("body-parser");
 
-const app = express();
-const port = process.env.PORT || 3001;
+let app = express();
+let port = process.env.PORT || 3001;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const Board = require('./components/Board');
-const Entry = require('./components/Entry');
-const Score = require('./components/Score');
+let boards = require('./controllers/boards');
+let Entry = require('./controllers/Entry');
+let Score = require('./controllers/Score');
 
 // Routes
-const router = express.Router();
+let router = express.Router();
 
 router.use((req, res, next) => {
   // Middleware
@@ -24,17 +24,17 @@ router.get("/", (req, res) => {
 });
 
 router.route("/boards")
-  .get(Board.getAllBoards)
+  .get((req, res) => {
+    boards.getAllBoards().then(result => res.json(result) );
+  })
   .post((req, res) => {
-    const newBoard = Board.addBoard(req);
-    newBoard.then(function(x) {
-      console.log(x);
-    });
-    res.send('hi');
+    boards.addBoard(req).then(result => res.json(result) );
   });
 
 router.route("/boards/:id")
-  .get(Board.getBoardById);
+  .get((req, res) => {
+    boards.getBoardById(req.params.id).then(result => res.json(result) );
+  });
 
 router.route("/boards/:id/entries")
   .get(Entry.getEntriesForBoard)

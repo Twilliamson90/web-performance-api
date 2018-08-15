@@ -1,6 +1,6 @@
-const db = require('./db');
-const lighthouse = require('lighthouse');
-const chromeLauncher = require('chrome-launcher');
+let db = require('./db');
+let lighthouse = require('lighthouse');
+let chromeLauncher = require('chrome-launcher');
 
 function launchChromeAndRunLighthouse(url, opts, config = null) {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
@@ -15,23 +15,23 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
   });
 };
 
-const Score = {
+let Score = {
 
   addScore: function(req, res) {
-    const entryId = req.params.id;
+    let entryId = req.params.id;
 
-    const sql = 'SELECT * FROM entries WHERE id = ? LIMIT 1';
-    const query = db.query(sql, entryId, (err, result) => {
+    let sql = 'SELECT * FROM entries WHERE id = ? LIMIT 1';
+    let query = db.query(sql, entryId, (err, result) => {
       if(err) throw err;
       console.log(result);
-      const testUrl = result[0].url;
+      let testUrl = result[0].url;
 
-      const opts = {
+      let opts = {
         chromeFlags: ['--headless']
       };
 
       launchChromeAndRunLighthouse(testUrl, opts).then(results => {
-        const score = {
+        let score = {
           'entry_id': entryId,
           'speed_index': results.audits['speed-index'].rawValue
         };
