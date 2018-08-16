@@ -1,6 +1,7 @@
-let db = require('./db');
+let db = require('../models/db');
 let lighthouse = require('lighthouse');
 let chromeLauncher = require('chrome-launcher');
+let Score = require('../models/Score');
 
 function launchChromeAndRunLighthouse(url, opts, config = null) {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
@@ -15,13 +16,12 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
   });
 };
 
-let Score = {
+let scores = {
 
-  addScore: function(req, res) {
-    let entryId = req.params.id;
+  addScore: function(siteId) {
 
     let sql = 'SELECT * FROM entries WHERE id = ? LIMIT 1';
-    let query = db.query(sql, entryId, (err, result) => {
+    let query = db.query(sql, siteId, (err, result) => {
       if(err) throw err;
       console.log(result);
       let testUrl = result[0].url;
@@ -32,7 +32,7 @@ let Score = {
 
       launchChromeAndRunLighthouse(testUrl, opts).then(results => {
         let score = {
-          'entry_id': entryId,
+          'site_id': siteId,
           'speed_index': results.audits['speed-index'].rawValue
         };
         let sql = 'INSERT INTO scores SET ?';
@@ -42,8 +42,12 @@ let Score = {
         });
       });
     });
+  },
+
+  findScoresBySiteId: async function(siteId) {
+    return await Score.findScoresBySiteId(siteId);
   }
 
 };
 
-module.exports = Score;
+module.exports = scores;

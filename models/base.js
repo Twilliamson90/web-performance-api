@@ -1,8 +1,6 @@
-let db = require('../controllers/db');
+let db = require('./db');
 
 let base = {
-
-  tableName: '',
 
   create: function(tableData) {
     let sql = 'INSERT INTO ?? SET ?';
@@ -15,7 +13,8 @@ let base = {
     });
   },
 
-  getAll: function() {
+  findAll: function() {
+    console.log(this.tableName);
     let sql = 'SELECT * FROM ??';
     return new Promise((resolve, reject) => {
       db.query(sql, this.tableName, (err, result) => {
@@ -25,7 +24,7 @@ let base = {
     });
   },
 
-  getById: function(id) {
+  findById: function(id) {
     let sql = 'SELECT * FROM ?? WHERE id = ?';
     return new Promise((resolve, reject) => {
       db.query(sql, [this.tableName, id], (err, result) => {
