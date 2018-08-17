@@ -1,12 +1,12 @@
-let shortid = require('shortid');
-let Board = require('../models/board');
+const shortid = require('shortid');
+const Board = new (require('../models/board'));
 
-let boards = {
+const boards = {
 
   create: async function(req) {
-    let boardName = req.body.boardName;
-    let boardSlug = boardName.replace(/\s+/g, '-').toLowerCase() + '-' + shortid.generate();
-    let board = {name: boardName, slug: boardSlug};
+    const boardName = req.body.boardName;
+    const boardSlug = boardName.replace(/\s+/g, '-').toLowerCase() + '-' + shortid.generate();
+    const board = {name: boardName, slug: boardSlug};
     return await Board.create(board);
   },
 

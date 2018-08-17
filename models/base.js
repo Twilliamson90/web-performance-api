@@ -1,9 +1,13 @@
-let db = require('./db');
+const db = require('./db');
 
-let base = {
+class Base {
 
-  create: function(tableData) {
-    let sql = 'INSERT INTO ?? SET ?';
+  constructor() {
+    this.tableName = 'base';
+  }
+
+  create(tableData) {
+    const sql = 'INSERT INTO ?? SET ?';
     console.log(this.tableName);
     return new Promise((resolve, reject) => {
       db.query(sql, [this.tableName, tableData], (err, result) => {
@@ -11,29 +15,29 @@ let base = {
         resolve(result);
       });
     });
-  },
+  }
 
-  findAll: function() {
+  findAll() {
     console.log(this.tableName);
-    let sql = 'SELECT * FROM ??';
+    const sql = 'SELECT * FROM ??';
     return new Promise((resolve, reject) => {
       db.query(sql, this.tableName, (err, result) => {
         if (err) throw err;
         resolve(result);
       });
     });
-  },
+  }
 
-  findById: function(id) {
-    let sql = 'SELECT * FROM ?? WHERE id = ?';
+  findById(id) {
+    const sql = 'SELECT * FROM ?? WHERE id = ?';
     return new Promise((resolve, reject) => {
       db.query(sql, [this.tableName, id], (err, result) => {
         if(err) throw err;
-        resolve(result);
+        resolve(result[0]);
       });
     });
   }
 
-};
+}
 
-module.exports = base;
+module.exports = Base;

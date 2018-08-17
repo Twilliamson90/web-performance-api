@@ -1,16 +1,23 @@
-let db = require('./db');
-let base = require('./base');
+const db = require('./db');
+const Base = require('./Base');
 
-base.tableName = 'scores';
+class Score extends Base {
 
-base.findScoresBySiteId = function(siteId) {
-  let sql = 'SELECT * FROM ?? WHERE site_id = ?';
-  return new Promise((resolve, reject) => {
-    db.query(sql, [this.tableName, siteId], (err, result) => {
-      if (err) throw err;
-      resolve(result);
+  constructor() {
+    super();
+    this.tableName = 'scores';
+  }
+
+  findScoresBySiteId(siteId) {
+    const sql = 'SELECT * FROM ?? WHERE site_id = ?';
+    return new Promise((resolve, reject) => {
+      db.query(sql, [this.tableName, siteId], (err, result) => {
+        if (err) throw err;
+        resolve(result);
+      });
     });
-  });
-};
+  }
 
-module.exports = base;
+}
+
+module.exports = Score;

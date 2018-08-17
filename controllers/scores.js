@@ -1,9 +1,9 @@
-let db = require('../models/db');
-let lighthouse = require('lighthouse');
-let chromeLauncher = require('chrome-launcher');
-let Score = require('../models/Score');
+const lighthouse = require('lighthouse');
+const chromeLauncher = require('chrome-launcher');
+const Score = new (require('../models/Score'));
+const Site = new (require('../models/Site'));
 
-function launchChromeAndRunLighthouse(url, opts, config = null) {
+const launchChromeAndRunLighthouse = function(url, opts, config = null) {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
     opts.port = chrome.port;
     return lighthouse(url, opts, config).then(results => {
@@ -16,32 +16,27 @@ function launchChromeAndRunLighthouse(url, opts, config = null) {
   });
 };
 
-let scores = {
-
-  addScore: function(siteId) {
-
-    let sql = 'SELECT * FROM entries WHERE id = ? LIMIT 1';
-    let query = db.query(sql, siteId, (err, result) => {
-      if(err) throw err;
-      console.log(result);
-      let testUrl = result[0].url;
-
-      let opts = {
-        chromeFlags: ['--headless']
-      };
-
-      launchChromeAndRunLighthouse(testUrl, opts).then(results => {
-        let score = {
-          'site_id': siteId,
-          'speed_index': results.audits['speed-index'].rawValue
-        };
-        let sql = 'INSERT INTO scores SET ?';
-        let query = db.query(sql, score, (err, result) => {
-          if(err) throw err;
-          res.json(result);
-        });
-      });
+const getScore = async function(url) {
+  const opts = {
+    chromeFlags: ['--headless']
+  };
+  return new Promise((resolve, reject) => {
+    launchChromeAndRunLighthouse(url, opts).then(results => {
+      resolve(results.audits['speed-index'].rawValue);
     });
+  });
+};
+
+const scores = {
+
+  runAudit: async function(siteId) {
+    const siteToAudit = await Site.findById(siteId);
+    const auditUrl = siteToAudit.url;
+    let score = {};
+    score.speed_index = await getScore(auditUrl);
+    score.site_id = siteId;
+
+    return await Score.create(score);
   },
 
   findScoresBySiteId: async function(siteId) {

@@ -1,10 +1,9 @@
-let express = require('express');
-let boards = require('./controllers/boards');
-let sites = require('./controllers/sites');
-let scores = require('./controllers/scores');
+const express = require('express');
+const boards = require('./controllers/boards');
+const sites = require('./controllers/sites');
+const scores = require('./controllers/scores');
 
-// Routes
-let router = express.Router();
+const router = express.Router();
 
 router.use((req, res, next) => {
   // Middleware
@@ -38,7 +37,7 @@ router.route("/boards/:id/sites")
 
 router.route("/sites/:id")
   .get((req, res) => {
-    sites.findById(req.params.id).then(result => res.json(result))
+    sites.findSitesByBoardId(req.params.id).then(result => res.json(result))
   })
   .post((req, res) => {
     sites.create(req)
@@ -47,6 +46,11 @@ router.route("/sites/:id")
 router.route("/sites/:id/scores")
   .get((req, res) => {
     scores.findScoresBySiteId(req.params.id).then(result => res.json(result));
+  });
+
+router.route("/audit/:siteId")
+  .get((req, res) => {
+    scores.runAudit(req.params.siteId).then(result => res.json(result));
   });
 
 module.exports = router;

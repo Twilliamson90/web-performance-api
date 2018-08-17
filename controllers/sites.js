@@ -1,10 +1,10 @@
-let Site = require('../models/Site');
+const Site = new (require('../models/Site'));
 
-let sites = {
+const sites = {
 
   create: async function(req) {
-    let reqSite = {...req.body};
-    let site = {
+    const reqSite = {...req.body};
+    const site = {
       display_name: reqSite.displayName,
       url: reqSite.url,
       board_id: req.params.id
@@ -14,7 +14,7 @@ let sites = {
 
   findSitesByBoardId: async function(boardId) {
     return await Site.findSitesByBoardId(boardId);
-  },
+  }
 
 };
 

@@ -1,5 +1,12 @@
-let base = require('./base');
+const Base = require('./Base');
 
-base.tableName = 'boards';
+class Board extends Base {
 
-module.exports = base;
+  constructor() {
+    super();
+    this.tableName = 'boards';
+  }
+
+}
+
+module.exports = Board;
