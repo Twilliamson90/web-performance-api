@@ -32,11 +32,11 @@ const scores = {
   runAudit: async function(siteId) {
     const siteToAudit = await Site.findById(siteId);
     const auditUrl = siteToAudit.url;
-    let score = {};
-    score.speed_index = await getScore(auditUrl);
-    score.site_id = siteId;
-
-    return await Score.create(score);
+    let newScore = {};
+    newScore.speed_index = await getScore(auditUrl);
+    newScore.site_id = siteId;
+    Site.updateCurrentScore(newScore);
+    return await Score.create(newScore);
   },
 
   findScoresBySiteId: async function(siteId) {

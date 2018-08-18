@@ -1,5 +1,6 @@
 const shortid = require('shortid');
 const Board = new (require('../models/board'));
+const Site = new (require('../models/Site'));
 
 const boards = {
 
@@ -12,6 +13,14 @@ const boards = {
 
   findAll: async function() {
     return await Board.findAll();
+  },
+
+  findBySlug: async function(slug) {
+    let boardData = {};
+    boardData.meta = await Board.findBySlug(slug);
+    boardData.sites = await Site.findSitesByBoardId(boardData.meta.id);
+    console.log(boardData);
+    return boardData;
   },
 
   findById: async function(boardId) {

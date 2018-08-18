@@ -5,7 +5,7 @@ const sites = {
   create: async function(req) {
     const reqSite = {...req.body};
     const site = {
-      display_name: reqSite.displayName,
+      display_name: reqSite.display_name,
       url: reqSite.url,
       board_id: req.params.id
     };
@@ -14,6 +14,10 @@ const sites = {
 
   findSitesByBoardId: async function(boardId) {
     return await Site.findSitesByBoardId(boardId);
+  },
+
+  updateCurrentScore: async function(score) {
+    return await Site.updateCurrentScore(score);
   }
 
 };

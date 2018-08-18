@@ -7,6 +7,8 @@ const router = express.Router();
 
 router.use((req, res, next) => {
   // Middleware
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
 
@@ -27,6 +29,11 @@ router.route("/boards/:id")
     boards.findById(req.params.id).then(result => res.json(result));
   });
 
+router.route("/boards/slug/:slug")
+  .get((req, res) => {
+    boards.findBySlug(req.params.slug).then(result => res.json(result));
+  });
+
 router.route("/boards/:id/sites")
   .get((req, res) => {
     sites.findSitesByBoardId(req.params.id).then(result => res.json(result));
@@ -40,7 +47,7 @@ router.route("/sites/:id")
     sites.findSitesByBoardId(req.params.id).then(result => res.json(result))
   })
   .post((req, res) => {
-    sites.create(req)
+    sites.create(req).then(result => res.json(result));
   });
 
 router.route("/sites/:id/scores")
