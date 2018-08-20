@@ -8,7 +8,10 @@ const boards = {
     const boardName = req.body.boardName;
     const boardSlug = boardName.replace(/\s+/g, '-').toLowerCase() + '-' + shortid.generate();
     const board = {name: boardName, slug: boardSlug};
-    return await Board.create(board);
+    const newBoard = await Board.create(board);
+    if(newBoard.affectedRows === 1) {
+      return board;
+    }
   },
 
   findAll: async function() {
@@ -19,7 +22,6 @@ const boards = {
     let boardData = {};
     boardData.meta = await Board.findBySlug(slug);
     boardData.sites = await Site.findSitesByBoardId(boardData.meta.id);
-    console.log(boardData);
     return boardData;
   },
 
