@@ -1,7 +1,7 @@
 let config = require('../config');
 let mysql = require('mysql');
 
-let db = mysql.createConnection(config.development.database);
+let db = mysql.createConnection(config.db);
 
 db.connect((err) => {
   if(err) {

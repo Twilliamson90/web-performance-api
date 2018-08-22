@@ -1,9 +1,18 @@
 const express = require('express');
+const router = require('express-promise-router')();
+const passport = require('passport');
+const passportConfig = require('./passport-config');
+
 const boards = require('./controllers/boards');
 const sites = require('./controllers/sites');
 const scores = require('./controllers/scores');
 
-const router = express.Router();
+const { validateBody, schemas } = require('./helpers/route-helpers');
+const UsersController = require('./controllers/users');
+const passportSignIn = passport.authenticate('local', { session: false });
+const passportJWT = passport.authenticate('jwt', { session: false });
+
+// const router = express.Router();
 
 router.use((req, res, next) => {
   // Middleware
@@ -15,6 +24,25 @@ router.use((req, res, next) => {
 router.get("/", (req, res) => {
   res.send("Hello from root");
 });
+
+// USER / AUTHENTICATION
+
+router.route('/signup')
+  .post(validateBody(schemas.authSchema), UsersController.signUp);
+
+router.route('/signin')
+  .post(validateBody(schemas.authSchema), passportSignIn, UsersController.signIn);
+
+router.route('/oauth/google')
+  .post(passport.authenticate('googleToken', { session: false }), UsersController.googleOAuth);
+
+router.route('/oauth/facebook')
+  .post(passport.authenticate('facebookToken', { session: false }), UsersController.facebookOAuth);
+
+router.route('/secret')
+  .get(passportJWT, UsersController.secret);
+
+// API
 
 // GET http://localhost:3001/boards
 // POST { boardName: 'Great board name' }
@@ -48,7 +76,8 @@ router.route("/boards/:id/sites")
     sites.create(req).then(result => res.json(result));
   });
 
-// GET POST http://localhost:3001/sites/3
+// GET http://localhost:3001/sites/3
+// POST :id {  }
 router.route("/sites/:id")
   .get((req, res) => {
     sites.findSitesByBoardId(req.params.id).then(result => res.json(result))

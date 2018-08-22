@@ -30,7 +30,7 @@ const getScore = async function(url) {
 const scores = {
 
   runAudit: async function(siteId) {
-    console.log('Audit runnion on siteId: ' + siteId);
+    console.log('Audit running on siteId: ' + siteId);
     const siteToAudit = await Site.findById(siteId);
     const auditUrl = siteToAudit.url;
     let newScore = {};
