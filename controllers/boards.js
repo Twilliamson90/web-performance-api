@@ -19,6 +19,7 @@ const boards = {
   },
 
   findBySlug: async function(slug) {
+    console.log(slug);
     let boardData = {};
     boardData.meta = await Board.findBySlug(slug);
     boardData.sites = await Site.findSitesByBoardId(boardData.meta.id);

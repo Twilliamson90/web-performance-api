@@ -38,6 +38,17 @@ class Base {
     });
   }
 
+  findOne(searchData) {
+    console.log(searchData);
+    const sql = 'SELECT * FROM ?? WHERE ? = ?';
+    return new Promise((resolve, reject) => {
+      db.query(sql, [this.tableName, searchData], (err, result) => {
+        if(err) throw err;
+        resolve(result[0]);
+      });
+    });
+  }
+
 }
 
 module.exports = Base;
