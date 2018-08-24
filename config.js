@@ -6,7 +6,7 @@ if(process.env.NODE_ENV.trim() === 'development') {
       password: '',
       database: 'web_perf_index'
     },
-    JWT_SECRET: 'supersecretpassword',
+    JWT_SECRET: 'webperfsupersecretpassword',
     oauth: {
       google: {
         clientID: 'number',
@@ -26,7 +26,7 @@ if(process.env.NODE_ENV.trim() === 'development') {
       password: '',
       database: 'web_perf_index'
     },
-    JWT_SECRET: 'supersecretpassword',
+    JWT_SECRET: 'webperfsupersecretpassword',
     oauth: {
       google: {
         clientID: 'number',
