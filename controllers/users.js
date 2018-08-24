@@ -13,7 +13,7 @@ signToken = user => {
 
 module.exports = {
   signUp: async (req, res, next) => {
-    const { email, password } = req.value.body;
+    const { email, password, display_name } = req.value.body;
 
     // Check if there is a user with the same email
     const foundUser = await User.findByEmail(email);
@@ -22,7 +22,7 @@ module.exports = {
       return res.status(403).json({ error: 'Email is already in use'});
     }
 
-    const newUser = await User.create({ email, password });
+    const newUser = await User.create({ email, password, display_name });
 
     console.log(newUser);
 
