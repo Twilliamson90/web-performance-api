@@ -5,7 +5,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const GooglePlusTokenStrategy = require('passport-google-plus-token');
 const FacebookTokenStrategy = require('passport-facebook-token');
 const config = require('./config');
-const User = require('./models/user');
+const User = require('./models/User');
 
 // JSON WEB TOKENS STRATEGY
 passport.use(new JwtStrategy({

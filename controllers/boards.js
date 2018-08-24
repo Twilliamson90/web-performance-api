@@ -1,5 +1,5 @@
 const shortid = require('shortid');
-const Board = new (require('../models/board'));
+const Board = new (require('../models/Board'));
 const Site = new (require('../models/Site'));
 
 const boards = {
