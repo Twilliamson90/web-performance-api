@@ -53,7 +53,7 @@ router.route("/boards")
   .get((req, res) => {
     boards.findAll().then(result => res.json(result));
   })
-  .post((req, res) => {
+  .post(passportJWT, (req, res) => {
     boards.create(req).then(result => res.json(result));
   });
 
@@ -75,7 +75,7 @@ router.route("/boards/:id/sites")
   .get((req, res) => {
     sites.findSitesByBoardId(req.params.id).then(result => res.json(result));
   })
-  .post((req, res) => {
+  .post(passportJWT, (req, res) => {
     sites.create(req).then(result => res.json(result));
   });
 
@@ -84,10 +84,11 @@ router.route("/boards/:id/sites")
 router.route("/sites/:id")
   .get((req, res) => {
     sites.findSitesByBoardId(req.params.id).then(result => res.json(result))
-  })
-  .post((req, res) => {
-    sites.create(req).then(result => res.json(result));
   });
+
+  // .post((req, res) => {
+  //   sites.create(req).then(result => res.json(result));
+  // });
 
 // GET http://localhost:3001/sites/3/scores
 router.route("/sites/:id/scores")

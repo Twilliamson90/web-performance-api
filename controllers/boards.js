@@ -7,7 +7,11 @@ const boards = {
   create: async function(req) {
     const boardName = req.body.boardName;
     const boardSlug = boardName.replace(/\s+/g, '-').toLowerCase() + '-' + shortid.generate();
-    const board = {name: boardName, slug: boardSlug};
+    const board = {
+      name: boardName,
+      slug: boardSlug,
+      owner_id: req.user.id
+    };
     const newBoard = await Board.create(board);
     if(newBoard.affectedRows === 1) {
       return board;
