@@ -11,6 +11,14 @@ const users = require('./controllers/users');
 
 const passportSignIn = passport.authenticate('local', { session: false });
 const passportJWT = passport.authenticate('jwt', { session: false });
+const passportAnon = passport.authenticate('anonymous', { session: false });
+
+const optionalAuth = function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    req.authenticated = !! user;
+    next();
+  })(req, res, next);
+};
 
 // const router = express.Router();
 
@@ -65,9 +73,22 @@ router.route("/boards/:id")
 
 // GET http://localhost:3001/boards/slug/top-brands-gxy76
 router.route("/boards/slug/:slug")
-  .get((req, res) => {
-    boards.findBySlug(req.params.slug).then(result => res.json(result));
-  });
+  .get(passport.authenticate(['jwt', 'anonymous'], { session: false }),
+    function(req, res) {
+      console.log(req.user);
+      let userId = 0;
+      if (req.user) {
+        userId = req.user.id;
+        console.log('user');
+      } else {
+        console.log('anon');
+      }
+      boards.findBySlug(req.params.slug, userId).then(result => res.json(result));
+    });
+  // , (req, res) => {
+  //   console.log(req.authenticated);
+  //   boards.findBySlug(req.params.slug).then(result => res.json(result));
+  // });
 
 // GET http://localhost:3001/boards/3/sites
 // POST :id { displayName: 'Awesome name', url: 'https://www.google.com' }

@@ -22,11 +22,11 @@ const boards = {
     return await Board.findAll();
   },
 
-  findBySlug: async function(slug) {
-    console.log(slug);
+  findBySlug: async function(slug, userId = 0) {
     let boardData = {};
     boardData.meta = await Board.findBySlug(slug);
     boardData.sites = await Site.findSitesByBoardId(boardData.meta.id);
+    boardData.isOwner = boardData.meta.owner_id === userId;
     return boardData;
   },
 
