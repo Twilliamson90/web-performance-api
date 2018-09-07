@@ -18,10 +18,6 @@ class Board extends Base {
     });
   }
 
-  findSites(boardId) {
-
-  }
-
 }
 
 module.exports = Board;

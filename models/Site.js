@@ -29,6 +29,16 @@ class Site extends Base {
     });
   }
 
+  removeSite(siteId, boardId) {
+    const sql = 'DELETE FROM ?? WHERE id = ? AND board_id = ?';
+    return new Promise((resolve, reject) => {
+      db.query(sql, [this.tableName, +siteId, +boardId], (err, result) => {
+        if(err) throw err;
+        resolve(result);
+      });
+    });
+  }
+
 }
 
 module.exports = Site;

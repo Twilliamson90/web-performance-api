@@ -25,6 +25,7 @@ const optionalAuth = function(req, res, next) {
 router.use((req, res, next) => {
   // Middleware
   res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
   next();
 });
@@ -92,12 +93,20 @@ router.route("/boards/slug/:slug")
 
 // GET http://localhost:3001/boards/3/sites
 // POST :id { displayName: 'Awesome name', url: 'https://www.google.com' }
+// DELETE :id { siteId }
 router.route("/boards/:id/sites")
   .get((req, res) => {
     sites.findSitesByBoardId(req.params.id).then(result => res.json(result));
   })
   .post(passportJWT, (req, res) => {
     sites.create(req).then(result => res.json(result));
+  });
+
+router.route("/boards/:boardId/sites/:siteId")
+  .delete(passportJWT, (req, res) => {
+    console.log(req.params.boardId);
+    console.log(req.params.siteId);
+    sites.removeSite(req).then(result => res.json(result));
   });
 
 // GET http://localhost:3001/sites/3

@@ -33,6 +33,24 @@ const sites = {
 
   updateCurrentScore: async function(score) {
     return await Site.updateCurrentScore(score);
+  },
+
+  removeSite: async function(req) {
+    const boardId = req.params.boardId;
+    const siteId = req.params.siteId;
+    const parentBoard = await Board.findById(boardId);
+
+    if(parentBoard.owner_id !== req.user.id) {
+      throw "A user cannot delete sites from a board they don't own";
+    }
+
+    const removedSite = await Site.removeSite(siteId, boardId);
+    if(removedSite.affectedRows === 1) {
+      return {"success": true};
+    }
+
+    return await Site.removeSite(siteId, boardId);
+    //return await Board.removeSite(siteId, boardId)
   }
 
 };
