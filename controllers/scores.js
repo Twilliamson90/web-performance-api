@@ -3,6 +3,8 @@ const chromeLauncher = require('chrome-launcher');
 const Score = new (require('../models/Score'));
 const Site = new (require('../models/Site'));
 
+const average = arr => arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+
 const launchChromeAndRunLighthouse = function(url, opts, config = null) {
   return chromeLauncher.launch({chromeFlags: opts.chromeFlags}).then(chrome => {
     opts.port = chrome.port;
@@ -27,6 +29,15 @@ const getScore = async function(url) {
   });
 };
 
+const updateCurrentScore = async function(siteId) {
+  let scores = await Score.findRecentScoresBySiteId(siteId);
+  scores = scores.map(score => score.speed_index);
+  let newScore = {};
+  newScore.site_id = siteId;
+  newScore.speed_index = average(scores);
+  return await Site.updateCurrentScore(newScore);
+};
+
 const scores = {
 
   runAudit: async function(siteId) {
@@ -36,13 +47,26 @@ const scores = {
     let newScore = {};
     newScore.speed_index = await getScore(auditUrl);
     newScore.site_id = siteId;
-    Site.updateCurrentScore(newScore);
+    // console.log(scores);
     console.log('audit finished');
-    return await Score.create(newScore);
+    await Score.create(newScore);
+    await updateCurrentScore(siteId);
+    return newScore;
   },
 
   findScoresBySiteId: async function(siteId) {
     return await Score.findScoresBySiteId(siteId);
+  },
+
+  updateBoard: async function(boardId) {
+    const sitesToUpdate = await Site.findSitesByBoardId(boardId);
+    console.log('Updating board');
+    console.log(sitesToUpdate);
+    sitesToUpdate.forEach(site => {
+      console.log(site);
+      this.runAudit(site.id);
+    });
+    return true;
   }
 
 };

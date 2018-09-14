@@ -19,7 +19,6 @@ class Site extends Base {
   }
 
   updateCurrentScore(score) {
-    console.log(score);
     const sql = 'UPDATE ?? SET current_score = ? WHERE id = ?';
     return new Promise((resolve, reject) => {
       db.query(sql, [this.tableName, score.speed_index, score.site_id], (err, result) => {

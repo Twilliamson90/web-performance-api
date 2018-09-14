@@ -72,6 +72,13 @@ router.route("/boards/:id")
     boards.findById(req.params.id).then(result => res.json(result));
   });
 
+// GET http://localhost:3001/boards/3
+router.route("/boards/:id/update")
+  .get(passportJWT, (req, res) => {
+    console.log('updating..');
+    scores.updateBoard(req.params.id).then(result => res.json(result));
+  });
+
 // GET http://localhost:3001/boards/slug/top-brands-gxy76
 router.route("/boards/slug/:slug")
   .get(passport.authenticate(['jwt', 'anonymous'], { session: false }),
